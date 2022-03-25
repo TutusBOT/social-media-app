@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import "./Main.css";
 import Header from "./components/Header";
 import Post from "./components/Post";
@@ -18,24 +18,39 @@ import {
 	signInWithEmailAndPassword,
 	updateProfile,
 } from "firebase/auth";
-import { getStorage } from "firebase/storage";
+import { getStorage, ref } from "firebase/storage";
 import firebaseConfig from "./components/firebaseConfig";
-import SignUp from "./components/SignUp";
 import CreatePost from "./components/CreatePost";
 
 const firebaseApp = initializeApp(firebaseConfig);
 let auth = getAuth(firebaseApp);
+const storage = getStorage(firebaseApp);
+console.log(storage);
 
 console.log("test", auth);
 
 function App() {
 	const [searchInput, setSearchInput] = useState("");
 	const [posts, setPosts] = useState<DocumentData>();
-	const [logged, setLogged] = useState(false);
+	const [user, setUser] = useState<null | User>(null);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [username, setUsername] = useState("");
 	const [openCreatePost, setOpenCreatePost] = useState(false);
+	const [comments, setComments] = useState<[]>();
+	const logOutButton = (
+		<button
+			onClick={() => {
+				signOut(auth);
+				auth = getAuth(firebaseApp);
+			}}
+		>
+			Sign out
+		</button>
+	);
+	setTimeout(() => {
+		console.log("posty", posts);
+	}, 500);
 	// 	[
 	// 	{
 	// 		username: "TutusBOT",
@@ -52,7 +67,7 @@ function App() {
 	// ]
 	useEffect(() => {
 		const test = async () => {
-			const reqPostsData = await FB();
+			const reqPostsData = await FB(setComments);
 			console.log("elo", reqPostsData);
 			setPosts(reqPostsData);
 			return reqPostsData;
@@ -69,33 +84,32 @@ function App() {
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
-				setLogged(true);
+				setUser(user);
 			} else {
-				setLogged(false);
+				setUser(null);
 			}
 
 			console.log("user", user);
 		});
 	}, []);
 	return (
-		<div className="App">
+		<div className="main">
 			<Header
 				searchInput={searchInput}
 				setSearchInput={setSearchInput}
 				open={openCreatePost}
 				setOpen={setOpenCreatePost}
+				user={user}
+				logOutButton={logOutButton}
 			/>
-			{openCreatePost ? <CreatePost /> : null}
-			{auth.currentUser ? (
+			{user ? (
 				<>
-					<button
-						onClick={() => {
-							signOut(auth);
-							auth = getAuth(firebaseApp);
-						}}
-					>
-						Sign out
-					</button>
+					<CreatePost
+						user={user}
+						show={openCreatePost}
+						handleShow={setOpenCreatePost}
+					/>
+
 					<div className="posts">
 						{posts
 							? posts.map((post: IPosts) => {
@@ -105,6 +119,7 @@ function App() {
 											username={post.username}
 											caption={post.caption}
 											imageUrl={post.imageUrl}
+											profilePictureUrl={""}
 										/>
 									);
 							  })
@@ -168,15 +183,35 @@ interface IPosts {
 	imageUrl: string;
 }
 
-async function FB() {
+async function FB(setComments: SetStateAction<any>) {
 	const db = getFirestore();
 	const colRef = collection(db, "posts");
 	const querySnapshot = await getDocs(colRef);
+	console.log(querySnapshot);
+
 	const data: DocumentData[] = [];
 	querySnapshot.forEach((doc) => {
+		console.log(doc);
+
 		const post = doc.data();
 		const id = doc.id;
 		data.push({ id, ...post });
+	});
+	const dataWithComments: DocumentData[] = [];
+	data.forEach(async (doc) => {
+		const commmentsRef = collection(db, `posts/${doc.id}/comments`);
+		const queryComments = await getDocs(commmentsRef);
+		queryComments.forEach((commentObj) => {
+			const comment = commentObj.data();
+			dataWithComments.push([
+				doc.id,
+				comment.comment,
+				comment.likes,
+				comment.username,
+			]);
+		});
+		setComments(dataWithComments);
+		console.log("coms", dataWithComments);
 	});
 
 	// docSnap.data()
@@ -197,7 +232,7 @@ async function FB() {
 	// .catch((err) => {
 	// 	console.log(err.message);
 	// });
-	const storage = getStorage(firebaseApp);
+
 	return data;
 }
 function signUp(email: string, password: string, username: string) {
@@ -230,3 +265,4 @@ function signIn(email: string, password: string) {
 		});
 }
 export default App;
+export { storage };
