@@ -1,0 +1,21 @@
+@use "../abstracts" as *;
+
+.post {
+	display: grid;
+	grid-template-columns: 1fr;
+	width: 100%;
+	background-color: $color-main;
+	box-shadow: black 0 0 5px 0;
+}
+
+.post-header {
+	display: flex;
+	background-color: $color-main;
+}
+
+.post-image {
+	@include flex-center;
+	img {
+		max-width: 614px;
+	}
+}

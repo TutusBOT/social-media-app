@@ -1,0 +1,14 @@
+@use "../abstracts/" as *;
+
+.navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	@include flex-center;
+	width: 100%;
+	border-bottom: 1px solid $color-border;
+	background-color: $color-main;
+	img {
+		max-width: 60px;
+	}
+}
