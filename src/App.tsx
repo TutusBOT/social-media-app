@@ -38,6 +38,7 @@ function App() {
 	const [username, setUsername] = useState("");
 	const [openCreatePost, setOpenCreatePost] = useState(false);
 	const [comments, setComments] = useState<[]>();
+	const [updateComments, setUpdateComments] = useState(0);
 	const logOutButton = (
 		<button
 			onClick={() => {
@@ -48,9 +49,8 @@ function App() {
 			Sign out
 		</button>
 	);
-	setTimeout(() => {
-		console.log("posty", posts);
-	}, 500);
+	console.log(user);
+
 	// 	[
 	// 	{
 	// 		username: "TutusBOT",
@@ -67,9 +67,15 @@ function App() {
 	// ]
 	useEffect(() => {
 		const test = async () => {
-			const reqPostsData = await FB(setComments);
+			const reqPostsData = await FB(
+				setComments,
+				comments,
+				setUpdateComments,
+				updateComments
+			);
 			console.log("elo", reqPostsData);
 			setPosts(reqPostsData);
+			// getComments(reqPostsData)
 			return reqPostsData;
 		};
 		test();
@@ -92,6 +98,13 @@ function App() {
 			console.log("user", user);
 		});
 	}, []);
+
+	useEffect(() => {
+		console.log("kommy", comments);
+		console.log(updateComments);
+
+		setUpdateComments(updateComments + 1);
+	}, [comments]);
 	return (
 		<div className="main">
 			<Header
@@ -113,13 +126,18 @@ function App() {
 					<div className="posts">
 						{posts
 							? posts.map((post: IPosts) => {
+									console.log("id", post.id, post);
+									comments?.forEach((com) => {
+										console.log("com1", com);
+									});
 									return (
 										<Post
 											key={post.id}
+											id={post.id}
 											username={post.username}
 											caption={post.caption}
 											imageUrl={post.imageUrl}
-											profilePictureUrl={""}
+											user={user}
 										/>
 									);
 							  })
@@ -183,7 +201,12 @@ interface IPosts {
 	imageUrl: string;
 }
 
-async function FB(setComments: SetStateAction<any>) {
+async function FB(
+	setComments: SetStateAction<any>,
+	comments: any,
+	setUpdateComments: SetStateAction<any>,
+	updateComments: number
+) {
 	const db = getFirestore();
 	const colRef = collection(db, "posts");
 	const querySnapshot = await getDocs(colRef);
@@ -191,50 +214,33 @@ async function FB(setComments: SetStateAction<any>) {
 
 	const data: DocumentData[] = [];
 	querySnapshot.forEach((doc) => {
-		console.log(doc);
+		// console.log(doc);
 
 		const post = doc.data();
 		const id = doc.id;
 		data.push({ id, ...post });
 	});
-	const dataWithComments: DocumentData[] = [];
-	data.forEach(async (doc) => {
-		const commmentsRef = collection(db, `posts/${doc.id}/comments`);
-		const queryComments = await getDocs(commmentsRef);
-		queryComments.forEach((commentObj) => {
-			const comment = commentObj.data();
-			dataWithComments.push([
-				doc.id,
-				comment.comment,
-				comment.likes,
-				comment.username,
-			]);
-		});
-		setComments(dataWithComments);
-		console.log("coms", dataWithComments);
-	});
 
-	// docSnap.data()
-	// console.log(data);
+	// data.forEach(async (doc) => {
+	// 	console.log("docID", doc.id);
 
-	// const sth = await (snapshot)  =>{
-	// 	const postsData = snapshot.docs.map((doc) => {
-	// 		let data = doc.data();
-	// 		return { data };
+	// 	const commmentsRef = collection(db, `posts/${doc.id}/comments`);
+	// 	const queryComments = await getDocs(commmentsRef);
+	// 	queryComments.forEach((commentObj) => {
+	// 		const comment = commentObj.data();
+	// 		console.log(comment);
+	// 		setComments([doc.id, { ...comment }]);
+	// 		dataWithComments.push(doc.id, { ...comment });
 	// 	});
-	// }
-	// 	// .then((snapshot) => {
-	// 	const postsData = snapshot.docs.map((doc) => {
-	// 		let data = doc.data();
-	// 		return { data };
-	// 	});
-	// })
-	// .catch((err) => {
-	// 	console.log(err.message);
+	// 	console.log("coms", dataWithComments);
 	// });
+	// console.log("COMS", dataWithComments);
+
+	setUpdateComments(updateComments + 1);
 
 	return data;
 }
+
 function signUp(email: string, password: string, username: string) {
 	if (!email || !password) return;
 	console.log(auth);

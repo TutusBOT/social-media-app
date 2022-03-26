@@ -102,6 +102,11 @@ a:focus {
   cursor: pointer;
 }
 
+.authentication {
+  position: absolute;
+  z-index: 100;
+}
+
 .posts {
   width: 100%;
   display: grid;
