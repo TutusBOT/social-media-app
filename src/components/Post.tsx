@@ -1,28 +1,33 @@
+import { timeStamp } from "console";
 import {
 	addDoc,
 	collection,
+	deleteDoc,
 	DocumentData,
 	getFirestore,
 	onSnapshot,
 	orderBy,
 	query,
 	serverTimestamp,
+	doc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import Comment from "./Comment";
-
+import { BsThreeDots } from "react-icons/bs";
+import Moment from "react-moment";
 function Post({
 	id,
 	username,
 	caption,
 	imageUrl,
 	user,
+	timestamp,
 }: {
 	id: string;
 	username: string;
 	caption: string;
 	imageUrl: string;
 	user: any;
+	timestamp: any;
 }) {
 	// useEffect(() => {
 	// 	console.log("postcom", comments);
@@ -45,9 +50,11 @@ function Post({
 	// 	});
 	// 	console.log("sorted", sortedComments, id);
 	// }
+	const [openPostMenu, setOpenPostMenu] = useState(false);
 	const [comment, setComment] = useState("");
 	const [comments, setComments] = useState<DocumentData>();
 	const db = getFirestore();
+	const postDate = new Date(timestamp.seconds * 1000);
 
 	useEffect(() => {
 		onSnapshot(
@@ -84,13 +91,54 @@ function Post({
 
 	return (
 		<div className="post">
-			<h2 className="post-header">{username}</h2>
+			<div className="post-header">
+				<h2>{username}</h2>
+				<div>
+					<BsThreeDots
+						size={"2em"}
+						onClick={() => {
+							setOpenPostMenu(true);
+						}}
+					/>
+				</div>
+				{openPostMenu ? (
+					<div
+						className="modal"
+						onClick={() => {
+							setOpenPostMenu(false);
+						}}
+					>
+						{username == user.displayName ? (
+							<button
+								onClick={(e) => {
+									e.stopPropagation();
+									deleteDoc(doc(db, "posts", id));
+									setOpenPostMenu(false);
+								}}
+							>
+								Delete Post
+							</button>
+						) : (
+							""
+						)}
+					</div>
+				) : (
+					""
+				)}
+			</div>
 			<div className="post-image">
 				<img src={imageUrl} alt="" />
 			</div>
 			<h4 className="post-caption" style={{ fontWeight: "normal" }}>
-				<strong>{username}</strong>: {caption}
+				{caption ? (
+					<>
+						<strong>{username}</strong>: {caption}
+					</>
+				) : (
+					""
+				)}
 			</h4>
+			<Moment fromNow date={postDate.toDateString()} />
 			<div className="post-comments">
 				{/* {sortedComments.length ? (
 					<>
@@ -116,12 +164,16 @@ function Post({
 								console.log(com.data());
 
 								return (
-									<div key={com.id}>
+									<div key={com.id} className="comment">
 										<p>
 											{com.data().username}
 											{": "}
 											{com.data().comment}
 										</p>
+										<p>
+											<Moment fromNow date={com.data().timestamp?.toDate()} />
+										</p>
+										<p>{com.data().likes} likes</p>
 									</div>
 								);
 						  })

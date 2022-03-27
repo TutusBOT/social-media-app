@@ -10,7 +10,10 @@
 
 .post-header {
 	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	background-color: $color-main;
+	padding: 1em;
 }
 
 .post-image {

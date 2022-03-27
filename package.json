@@ -13,7 +13,11 @@
     "firebase": "^9.6.9",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-icons": "^4.3.1",
+    "react-moment": "^1.1.1",
     "react-scripts": "5.0.0",
+    "react-timeago": "^6.2.1",
+    "time-ago": "^0.2.1",
     "typescript": "^4.6.2",
     "web-vitals": "^2.1.4"
   },

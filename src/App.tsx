@@ -49,6 +49,7 @@ function App() {
 			Sign out
 		</button>
 	);
+
 	console.log(user);
 
 	// 	[
@@ -83,7 +84,7 @@ function App() {
 		// const checkauth = getAuth(firebaseApp);
 		// const a = checkauth;
 		// console.log("start", a.currentUser);
-	}, []);
+	}, [db]);
 	// useEffect(() => {
 	// 	console.log("jd");
 	// }, [auth.currentUser]);
@@ -114,6 +115,8 @@ function App() {
 				setOpen={setOpenCreatePost}
 				user={user}
 				logOutButton={logOutButton}
+				signIn={signIn}
+				signUp={signUp}
 			/>
 			{user ? (
 				<>
@@ -138,6 +141,7 @@ function App() {
 											caption={post.caption}
 											imageUrl={post.imageUrl}
 											user={user}
+											timestamp={post.timestamp}
 										/>
 									);
 							  })
@@ -199,15 +203,16 @@ interface IPosts {
 	username: string;
 	caption: string;
 	imageUrl: string;
+	timestamp: Object;
 }
 
+const db = getFirestore();
 async function FB(
 	setComments: SetStateAction<any>,
 	comments: any,
 	setUpdateComments: SetStateAction<any>,
 	updateComments: number
 ) {
-	const db = getFirestore();
 	const colRef = collection(db, "posts");
 	const querySnapshot = await getDocs(colRef);
 	console.log(querySnapshot);
