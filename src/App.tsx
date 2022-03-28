@@ -24,6 +24,7 @@ import {
 import { getStorage, ref } from "firebase/storage";
 import firebaseConfig from "./components/firebaseConfig";
 import CreatePost from "./components/CreatePost";
+import Profile from "./components/Profile";
 
 const firebaseApp = initializeApp(firebaseConfig);
 let auth = getAuth(firebaseApp);
@@ -98,7 +99,7 @@ function App() {
 		setUpdateComments(updateComments + 1);
 	}, [comments]);
 	return (
-		<div className="main">
+		<main className="main">
 			<Header
 				searchInput={searchInput}
 				setSearchInput={setSearchInput}
@@ -186,7 +187,8 @@ function App() {
 					</button>
 				</form>
 			)}
-		</div>
+			<Profile user={user} />
+		</main>
 	);
 }
 interface IPosts {
