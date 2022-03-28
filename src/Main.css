@@ -35,7 +35,7 @@ a:focus {
   grid-template-columns: 1fr;
   width: 100%;
   background-color: #fff;
-  box-shadow: black 0 0 5px 0;
+  border: 2px rgba(0, 0, 0, 0.2);
 }
 
 .post-header {
@@ -74,6 +74,19 @@ a:focus {
   flex-direction: column;
   gap: 1em;
   background-color: #fff;
+}
+
+.navbar-usermenu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+.navbar-usermenu * {
+  cursor: pointer;
+}
+.navbar-usermenu img {
+  width: 2em;
 }
 
 .usermenu-modal {
@@ -136,7 +149,4 @@ a:focus {
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #fff;
-}
-.navbar img {
-  max-width: 60px;
 }/*# sourceMappingURL=Main.css.map */

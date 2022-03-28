@@ -1,5 +1,16 @@
 @use "../abstracts/" as *;
 
+.navbar-usermenu {
+	@include flex-center;
+	gap: 1em;
+	* {
+		cursor: pointer;
+	}
+	img {
+		width: 2em;
+	}
+}
+
 .usermenu-modal {
 	position: fixed;
 	top: 0;

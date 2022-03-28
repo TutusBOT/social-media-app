@@ -8,6 +8,9 @@ import {
 	collection,
 	getDocs,
 	DocumentData,
+	onSnapshot,
+	query,
+	orderBy,
 } from "firebase/firestore";
 import {
 	createUserWithEmailAndPassword,
@@ -67,27 +70,15 @@ function App() {
 	// 	},
 	// ]
 	useEffect(() => {
-		const test = async () => {
-			const reqPostsData = await FB(
-				setComments,
-				comments,
-				setUpdateComments,
-				updateComments
-			);
-			console.log("elo", reqPostsData);
-			setPosts(reqPostsData);
-			// getComments(reqPostsData)
-			return reqPostsData;
-		};
-		test();
+		return onSnapshot(
+			query(collection(db, "posts"), orderBy("timestamp", "desc")),
+			(snapshot) => {
+				setPosts(snapshot.docs);
+			}
+		);
+	}, []);
+	console.log(posts);
 
-		// const checkauth = getAuth(firebaseApp);
-		// const a = checkauth;
-		// console.log("start", a.currentUser);
-	}, [db]);
-	// useEffect(() => {
-	// 	console.log("jd");
-	// }, [auth.currentUser]);
 	useEffect(() => {
 		onAuthStateChanged(auth, (user) => {
 			if (user) {
@@ -128,7 +119,7 @@ function App() {
 
 					<div className="posts">
 						{posts
-							? posts.map((post: IPosts) => {
+							? posts.map((post: any) => {
 									console.log("id", post.id, post);
 									comments?.forEach((com) => {
 										console.log("com1", com);
@@ -137,11 +128,11 @@ function App() {
 										<Post
 											key={post.id}
 											id={post.id}
-											username={post.username}
-											caption={post.caption}
-											imageUrl={post.imageUrl}
+											username={post.data().username}
+											caption={post.data().caption}
+											imageUrl={post.data().imageUrl}
 											user={user}
-											timestamp={post.timestamp}
+											timestamp={post.data().timestamp}
 										/>
 									);
 							  })
@@ -225,21 +216,6 @@ async function FB(
 		const id = doc.id;
 		data.push({ id, ...post });
 	});
-
-	// data.forEach(async (doc) => {
-	// 	console.log("docID", doc.id);
-
-	// 	const commmentsRef = collection(db, `posts/${doc.id}/comments`);
-	// 	const queryComments = await getDocs(commmentsRef);
-	// 	queryComments.forEach((commentObj) => {
-	// 		const comment = commentObj.data();
-	// 		console.log(comment);
-	// 		setComments([doc.id, { ...comment }]);
-	// 		dataWithComments.push(doc.id, { ...comment });
-	// 	});
-	// 	console.log("coms", dataWithComments);
-	// });
-	// console.log("COMS", dataWithComments);
 
 	setUpdateComments(updateComments + 1);
 

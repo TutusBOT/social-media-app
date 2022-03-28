@@ -6,6 +6,8 @@ import {
 	getFirestore,
 	Timestamp,
 	serverTimestamp,
+	updateDoc,
+	doc,
 } from "firebase/firestore";
 import { storage } from "../App";
 import { User } from "firebase/auth";
@@ -31,8 +33,13 @@ function CreatePost({
 		console.log("chuj", user);
 	};
 
-	const handleUpload = () => {
-		const imageRef = ref(storage, `images/${image.name}`);
+	const handleUpload = async () => {
+		const docRef = await addDoc(collection(db, "posts"), {
+			username: user?.displayName,
+			caption: caption,
+			timestamp: serverTimestamp(),
+		});
+		const imageRef = ref(storage, `images/${docRef.id}`);
 		const uploadImage = uploadBytesResumable(imageRef, image);
 		uploadImage.on(
 			"state_changed",
@@ -60,13 +67,11 @@ function CreatePost({
 				// Handle successful uploads on complete
 				// For instance, get the download URL: https://firebasestorage.googleapis.com/...
 				getDownloadURL(uploadImage.snapshot.ref).then((downloadURL) => {
-					const docRef = addDoc(collection(db, "posts"), {
-						username: user?.displayName,
-						caption: caption,
-						imageUrl: downloadURL,
-						timestamp: serverTimestamp(),
-					});
 					//   console.log('File available at', downloadURL);
+					updateDoc(doc(db, "posts", docRef.id), {
+						imageUrl: downloadURL,
+					});
+					handleShow(false);
 				});
 			}
 		);

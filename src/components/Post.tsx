@@ -10,9 +10,11 @@ import {
 	query,
 	serverTimestamp,
 	doc,
+	setDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import Moment from "react-moment";
 function Post({
 	id,
@@ -53,8 +55,10 @@ function Post({
 	const [openPostMenu, setOpenPostMenu] = useState(false);
 	const [comment, setComment] = useState("");
 	const [comments, setComments] = useState<DocumentData>();
+	const [likes, setLikes] = useState<DocumentData>();
+	const [hasliked, setHasLiked] = useState(false);
 	const db = getFirestore();
-	const postDate = new Date(timestamp.seconds * 1000);
+	// const postDate = new Date(timestamp.seconds * 1000);
 
 	useEffect(() => {
 		onSnapshot(
@@ -72,7 +76,19 @@ function Post({
 				setComments(commentsToDisplay);
 			}
 		);
-	}, [db]);
+	}, [db, id]);
+
+	useEffect(() => {
+		onSnapshot(collection(db, "posts", id, "likes"), (snapshot) => {
+			setLikes(snapshot.docs);
+		});
+	}, [db, id]);
+
+	useEffect(() => {
+		setHasLiked(
+			likes?.findIndex((like: { id: any }) => like.id === user.uid) !== -1
+		);
+	}, [likes]);
 
 	const addComment = async (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -84,9 +100,18 @@ function Post({
 		await addDoc(collection(db, "posts", id, "comments"), {
 			comment: commentToSend,
 			username: user.displayName,
-			likes: 0,
 			timestamp: serverTimestamp(),
 		});
+	};
+
+	const likePost = async () => {
+		if (hasliked) {
+			await deleteDoc(doc(db, "posts", id, "likes", user.uid));
+		} else {
+			await setDoc(doc(db, "posts", id, "likes", user.uid), {
+				username: user.displayName,
+			});
+		}
 	};
 
 	return (
@@ -138,26 +163,16 @@ function Post({
 					""
 				)}
 			</h4>
-			<Moment fromNow date={postDate.toDateString()} />
-			<div className="post-comments">
-				{/* {sortedComments.length ? (
-					<>
-						Comments: <br />
-					</>
+			{/* <Moment fromNow date={postDate.toDateString()} /> */}
+			<div>
+				{hasliked ? (
+					<AiFillHeart size={"2em"} color={"red"} onClick={likePost} />
 				) : (
-					""
+					<AiOutlineHeart size={"2em"} onClick={likePost} />
 				)}
-				{sortedComments.map((com) => {
-					return <Comment text={com[1]} likes={com[2]} username={com[3]} />;
-				})} */}
-
-				{/* {comments.length > 0 &&
-					comments.map((comment: any) => {
-						<div key={comment.id}>comment.data().likes</div>;
-					})} */}
-				{/* {setTimeout(() => {
-					comments.length ? "są" : "nie są";
-				}, 500)	} */}
+			</div>
+			<p>{likes ? likes.length : 0} likes</p>
+			<div className="post-comments">
 				{comments
 					? comments.length
 						? comments.map((com: any) => {
@@ -171,7 +186,7 @@ function Post({
 											{com.data().comment}
 										</p>
 										<p>
-											<Moment fromNow date={com.data().timestamp?.toDate()} />
+											{/* <Moment fromNow date={com.data().timestamp?.toDate()} /> */}
 										</p>
 										<p>{com.data().likes} likes</p>
 									</div>
