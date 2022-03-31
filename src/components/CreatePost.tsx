@@ -38,6 +38,8 @@ function CreatePost({
 			username: user?.displayName,
 			caption: caption,
 			timestamp: serverTimestamp(),
+			profilePicture: user?.photoURL,
+			uid: user?.uid,
 		});
 		const imageRef = ref(storage, `images/${docRef.id}`);
 		const uploadImage = uploadBytesResumable(imageRef, image);
@@ -100,6 +102,7 @@ function CreatePost({
 				/>
 				<input
 					type="file"
+					accept="image/*"
 					onChange={(e) => {
 						handleChange(e);
 					}}
