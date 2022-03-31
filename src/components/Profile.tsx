@@ -1,11 +1,24 @@
 import { updateProfile, User } from "firebase/auth";
+import { DocumentData, getDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { storage } from "../App";
+import Post from "./Post";
 
-function Profile({ user }: { user: User | null }) {
+function Profile({
+	user,
+	posts,
+}: {
+	user: User | null;
+	posts: DocumentData | undefined;
+}) {
 	const [image, setImage] = useState<any>();
 	const [username, setUsername] = useState(user?.displayName);
+	const [showPostModal, setShowPostModal] = useState<boolean | string>(false);
+	const filteredPosts = posts?.filter((post: DocumentData) => {
+		return post.data().uid === user?.uid;
+	});
+
 	useEffect(() => {
 		setUsername(user?.displayName);
 	}, [user]);
@@ -15,6 +28,20 @@ function Profile({ user }: { user: User | null }) {
 		if (!user) return;
 		updateProfile(user, {
 			displayName: username,
+		}).then(() => {
+			const filteredPosts = posts?.filter((post: any) => {
+				return post.data().uid === user.uid;
+			});
+			console.log("działa>>??", filteredPosts);
+			filteredPosts.forEach((filteredPost: DocumentData) => {
+				console.log("filtered", filteredPost);
+				const a = getDoc(filteredPost.ref);
+				console.log("document", a);
+
+				updateDoc(filteredPost.ref, {
+					username: user.displayName,
+				});
+			});
 		});
 	};
 	const handleChange = (event: any) => {
@@ -32,7 +59,11 @@ function Profile({ user }: { user: User | null }) {
 				// Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
 				const progress =
 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				console.log("Upload is " + progress + "% done");
+				console.log(
+					"Upload is " + progress + "% done",
+					snapshot.state,
+					snapshot.task
+				);
 				// setProgressPCT(progress);
 				switch (snapshot.state) {
 					case "paused":
@@ -55,34 +86,94 @@ function Profile({ user }: { user: User | null }) {
 					if (user) {
 						updateProfile(user, {
 							photoURL: downloadURL,
+						}).then(() => {
+							const filteredPosts = posts?.filter((post: any) => {
+								return post.data().uid === user?.uid;
+							});
+							console.log("działa>>??", filteredPosts);
+							filteredPosts.forEach((filteredPost: DocumentData) => {
+								console.log("filtered", filteredPost);
+								updateDoc(filteredPost.ref, {
+									profilePicture: downloadURL,
+								});
+							});
 						});
 					}
 				});
 			}
 		);
 	};
+
 	return (
 		<div>
 			<p>
-				Username:{" "}
+				<label htmlFor="username">Username: </label>
 				<input
+					id="username"
 					type="text"
 					value={username ?? ""}
 					onChange={(e) => {
 						setUsername(e.target.value);
 					}}
 				/>
-			</p>{" "}
-			<button onClick={changeUsername}>Submit</button>
+				<button onClick={changeUsername}>Submit</button>
+			</p>
 			<p>{user?.email}</p>
+			<img src={user?.photoURL || ""} alt="" />
 			<input
 				type="file"
+				accept="image/*"
 				onChange={(e) => {
 					handleChange(e);
 				}}
 			/>
 			<button onClick={handleUpload}>Change ProfPic</button>
-			<img src={user?.photoURL || ""} alt="" />
+			<h2 className="profile-posts-header">Posts</h2>
+			<div className="profile-posts">
+				{filteredPosts.map((post: DocumentData) => {
+					return (
+						<div
+							key={post.id}
+							className="profile-post"
+							onClick={() => {
+								console.log(post.id);
+								setShowPostModal(post.id);
+							}}
+						>
+							<img src={post.data().imageUrl} alt="" />
+							{showPostModal === post.id ? (
+								<div
+									className="modal"
+									onClick={(e) => {
+										e.stopPropagation();
+										setShowPostModal(false);
+										console.log(showPostModal);
+									}}
+								>
+									<div
+										className="profile-modal-post"
+										onClick={(e) => e.stopPropagation()}
+									>
+										<Post
+											key={post.id}
+											id={post.id}
+											username={post.data().username}
+											caption={post.data().caption}
+											imageUrl={post.data().imageUrl}
+											user={user}
+											timestamp={post.data().timestamp}
+											profilePic={post.data().profilePicture}
+											uid={post.data().uid}
+										/>
+									</div>
+								</div>
+							) : (
+								<></>
+							)}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 }

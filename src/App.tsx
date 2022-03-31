@@ -41,8 +41,9 @@ function App() {
 	const [password, setPassword] = useState("");
 	const [username, setUsername] = useState("");
 	const [openCreatePost, setOpenCreatePost] = useState(false);
-	const [comments, setComments] = useState<[]>();
-	const [updateComments, setUpdateComments] = useState(0);
+	// const [comments, setComments] = useState<[]>();
+	// const [updateComments, setUpdateComments] = useState(0);
+	const [showProfile, setShowProfile] = useState(false);
 	const logOutButton = (
 		<button
 			onClick={() => {
@@ -78,6 +79,7 @@ function App() {
 			}
 		);
 	}, []);
+
 	console.log(posts);
 
 	useEffect(() => {
@@ -92,12 +94,12 @@ function App() {
 		});
 	}, []);
 
-	useEffect(() => {
-		console.log("kommy", comments);
-		console.log(updateComments);
+	// useEffect(() => {
+	// 	// console.log("kommy", comments);
+	// 	console.log(updateComments);
 
-		setUpdateComments(updateComments + 1);
-	}, [comments]);
+	// 	setUpdateComments(updateComments + 1);
+	// }, [comments]);
 	return (
 		<main className="main">
 			<Header
@@ -109,6 +111,8 @@ function App() {
 				logOutButton={logOutButton}
 				signIn={signIn}
 				signUp={signUp}
+				showProfile={showProfile}
+				setShowProfile={setShowProfile}
 			/>
 			{user ? (
 				<>
@@ -119,25 +123,49 @@ function App() {
 					/>
 
 					<div className="posts">
-						{posts
-							? posts.map((post: any) => {
-									console.log("id", post.id, post);
-									comments?.forEach((com) => {
-										console.log("com1", com);
-									});
-									return (
-										<Post
-											key={post.id}
-											id={post.id}
-											username={post.data().username}
-											caption={post.data().caption}
-											imageUrl={post.data().imageUrl}
-											user={user}
-											timestamp={post.data().timestamp}
-										/>
-									);
-							  })
-							: ""}
+						{showProfile ? (
+							<Profile user={user} posts={posts} />
+						) : (
+							<>
+								{posts
+									? !searchInput
+										? posts.map((post: DocumentData) => {
+												console.log("id", post.id, post);
+
+												return (
+													<Post
+														key={post.id}
+														id={post.id}
+														username={post.data().username}
+														caption={post.data().caption}
+														imageUrl={post.data().imageUrl}
+														user={user}
+														timestamp={post.data().timestamp}
+														profilePic={post.data().profilePicture}
+														uid={post.data().uid}
+													/>
+												);
+										  })
+										: posts.map((post: DocumentData) => {
+												if (post.data().caption.includes(searchInput)) {
+													return (
+														<Post
+															key={post.id}
+															id={post.id}
+															username={post.data().username}
+															caption={post.data().caption}
+															imageUrl={post.data().imageUrl}
+															user={user}
+															timestamp={post.data().timestamp}
+															profilePic={post.data().profilePicture}
+															uid={post.data().uid}
+														/>
+													);
+												}
+										  })
+									: ""}
+							</>
+						)}
 					</div>
 				</>
 			) : (
@@ -187,42 +215,32 @@ function App() {
 					</button>
 				</form>
 			)}
-			<Profile user={user} />
 		</main>
 	);
 }
-interface IPosts {
-	id: string;
-	username: string;
-	caption: string;
-	imageUrl: string;
-	timestamp: Object;
-}
 
 const db = getFirestore();
-async function FB(
-	setComments: SetStateAction<any>,
-	comments: any,
-	setUpdateComments: SetStateAction<any>,
-	updateComments: number
-) {
-	const colRef = collection(db, "posts");
-	const querySnapshot = await getDocs(colRef);
-	console.log(querySnapshot);
+// async function FB(
+// 	setUpdateComments: SetStateAction<any>,
+// 	updateComments: number
+// ) {
+// 	const colRef = collection(db, "posts");
+// 	const querySnapshot = await getDocs(colRef);
+// 	console.log(querySnapshot);
 
-	const data: DocumentData[] = [];
-	querySnapshot.forEach((doc) => {
-		// console.log(doc);
+// 	const data: DocumentData[] = [];
+// 	querySnapshot.forEach((doc) => {
+// 		// console.log(doc);
 
-		const post = doc.data();
-		const id = doc.id;
-		data.push({ id, ...post });
-	});
+// 		const post = doc.data();
+// 		const id = doc.id;
+// 		data.push({ id, ...post });
+// 	});
 
-	setUpdateComments(updateComments + 1);
+// 	setUpdateComments(updateComments + 1);
 
-	return data;
-}
+// 	return data;
+// }
 
 function signUp(email: string, password: string, username: string) {
 	if (!email || !password) return;

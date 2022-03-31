@@ -13,8 +13,11 @@ import {
 	setDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { BsThreeDots } from "react-icons/bs";
+import { BsThreeDots, BsChat } from "react-icons/bs";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
+import { FiSend } from "react-icons/fi";
+import { MdSaveAlt } from "react-icons/md";
 import Moment from "react-moment";
 function Post({
 	id,
@@ -23,6 +26,8 @@ function Post({
 	imageUrl,
 	user,
 	timestamp,
+	profilePic,
+	uid,
 }: {
 	id: string;
 	username: string;
@@ -30,6 +35,8 @@ function Post({
 	imageUrl: string;
 	user: any;
 	timestamp: any;
+	profilePic: string;
+	uid: string;
 }) {
 	// useEffect(() => {
 	// 	console.log("postcom", comments);
@@ -101,6 +108,8 @@ function Post({
 			comment: commentToSend,
 			username: user.displayName,
 			timestamp: serverTimestamp(),
+			profilePicture: user.photoURL,
+			uid: user.uid,
 		});
 	};
 
@@ -117,7 +126,14 @@ function Post({
 	return (
 		<div className="post">
 			<div className="post-header">
-				<h2>{username}</h2>
+				<h2>
+					{profilePic ? (
+						<img src={profilePic} alt="profile" />
+					) : (
+						<FaUserCircle />
+					)}
+					{username}
+				</h2>
 				<div>
 					<BsThreeDots
 						size={"2em"}
@@ -133,7 +149,7 @@ function Post({
 							setOpenPostMenu(false);
 						}}
 					>
-						{username == user.displayName ? (
+						{uid == user.uid ? (
 							<button
 								onClick={(e) => {
 									e.stopPropagation();
@@ -154,6 +170,18 @@ function Post({
 			<div className="post-image">
 				<img src={imageUrl} alt="" />
 			</div>
+			{/* <Moment fromNow date={postDate.toDateString()} /> */}
+			<div>
+				{hasliked ? (
+					<AiFillHeart size={"2em"} color={"red"} onClick={likePost} />
+				) : (
+					<AiOutlineHeart size={"2em"} onClick={likePost} />
+				)}
+				<BsChat className="post-chaticon" size={"2em"} />
+				<FiSend size={"2em"} />
+				<MdSaveAlt size={"2em"} />
+			</div>
+			<p>{likes ? likes.length : 0} likes</p>
 			<h4 className="post-caption" style={{ fontWeight: "normal" }}>
 				{caption ? (
 					<>
@@ -163,20 +191,11 @@ function Post({
 					""
 				)}
 			</h4>
-			{/* <Moment fromNow date={postDate.toDateString()} /> */}
-			<div>
-				{hasliked ? (
-					<AiFillHeart size={"2em"} color={"red"} onClick={likePost} />
-				) : (
-					<AiOutlineHeart size={"2em"} onClick={likePost} />
-				)}
-			</div>
-			<p>{likes ? likes.length : 0} likes</p>
 			<div className="post-comments">
 				{comments
 					? comments.length
 						? comments.map((com: any) => {
-								console.log(com.data());
+								// console.log(com.data());
 
 								return (
 									<div key={com.id} className="comment">
@@ -185,10 +204,8 @@ function Post({
 											{": "}
 											{com.data().comment}
 										</p>
-										<p>
-											{/* <Moment fromNow date={com.data().timestamp?.toDate()} /> */}
-										</p>
-										<p>{com.data().likes} likes</p>
+
+										<p>{com.data().likes || 0} likes</p>
 									</div>
 								);
 						  })

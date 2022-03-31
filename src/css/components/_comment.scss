@@ -1,0 +1,7 @@
+@use "../abstracts/" as *;
+
+.comment {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}

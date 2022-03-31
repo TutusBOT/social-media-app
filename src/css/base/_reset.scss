@@ -8,6 +8,7 @@
 
 body {
 	min-height: 100vh;
+	background-color: #fafafa;
 }
 
 html {
@@ -17,6 +18,10 @@ html {
 img,
 svg {
 	max-width: 100%;
+}
+
+svg {
+	cursor: pointer;
 }
 
 a,

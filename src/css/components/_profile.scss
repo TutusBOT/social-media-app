@@ -1,0 +1,60 @@
+@use "../abstracts/" as *;
+
+.profile-posts {
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	justify-content: center;
+	gap: 2em;
+	padding: 1em;
+}
+
+.profile-post {
+	@include flex-center;
+	width: 100%;
+	background-color: $color-main;
+	border: 1px solid $color-border;
+	cursor: pointer;
+}
+
+.profile-posts-header {
+	text-align: center;
+}
+
+.profile-modal-post {
+	.post {
+		grid-template-columns: 2fr 1fr;
+		grid-template-rows: repeat(4, 2em) 1fr 2em;
+		row-gap: 1em;
+		padding: 0;
+		.post-comments {
+			display: flex;
+			justify-content: start;
+			align-items: center;
+			flex-direction: column;
+			gap: 0.5em;
+			max-height: 50vh;
+			padding-top: 0.5em;
+			padding-inline: 0.5em;
+			overflow-x: hidden;
+			word-wrap: break-all;
+			.comment {
+				width: 100%;
+				word-break: break-all;
+			}
+		}
+		.post-image {
+			grid-area: 1/1/7/2;
+			border-right: 1px solid $color-border;
+		}
+		> * {
+			grid-column: 2/3;
+			border-top: 1px solid $color-border;
+			padding-top: 0.5em;
+			padding-inline: 0.5em;
+		}
+		.post-chaticon {
+			display: none;
+		}
+	}
+}

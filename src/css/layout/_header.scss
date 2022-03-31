@@ -4,7 +4,9 @@
 	position: fixed;
 	top: 0;
 	left: 0;
-	@include flex-center;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	width: 100%;
 	border-bottom: 1px solid $color-border;
 	background-color: $color-main;

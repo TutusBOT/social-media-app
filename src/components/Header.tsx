@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import SearchBar from "./SearchBar";
 import UserMenu from "./UserMenu";
 
@@ -12,15 +12,19 @@ function Header({
 	logOutButton,
 	signIn,
 	signUp,
+	showProfile,
+	setShowProfile,
 }: {
 	searchInput: string;
-	setSearchInput: any;
+	setSearchInput: Dispatch<SetStateAction<string>>;
 	open: boolean;
-	setOpen: any;
+	setOpen: Dispatch<SetStateAction<boolean>>;
 	user: null | User;
 	logOutButton: JSX.Element;
 	signIn: Function;
 	signUp: Function;
+	showProfile: boolean;
+	setShowProfile: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [openSignUp, setOpenSignUp] = useState(false);
 	const [openSignIn, setOpenSignIn] = useState(false);
@@ -30,13 +34,15 @@ function Header({
 	return (
 		<nav className="navbar">
 			<div className="navbar-logo">LOGO</div>
-			<SearchBar searchInput={searchInput} setSearchInput={setSearchInput} />
+			<SearchBar setSearchInput={setSearchInput} />
 			{user ? (
 				<UserMenu
 					open={open}
 					setOpen={setOpen}
 					profilePicture={user.photoURL}
 					logOut={logOutButton}
+					setShowProfile={setShowProfile}
+					setSearchInput={setSearchInput}
 				/>
 			) : (
 				<>

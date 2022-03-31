@@ -6,6 +6,7 @@
 	width: 100%;
 	background-color: $color-main;
 	border: 2px $color-border;
+	padding-inline: 1em;
 }
 
 .post-header {
@@ -13,7 +14,17 @@
 	justify-content: space-between;
 	align-items: center;
 	background-color: $color-main;
-	padding: 1em;
+	h2 {
+		@include flex-center;
+		gap: 0.5rem;
+		img,
+		svg {
+			width: 1.5em;
+			height: 1.5em;
+			object-fit: contain;
+			border-radius: 50%;
+		}
+	}
 }
 
 .post-image {
@@ -21,4 +32,9 @@
 	img {
 		max-width: 614px;
 	}
+}
+
+.post-comments {
+	max-height: 3em;
+	overflow-y: auto;
 }

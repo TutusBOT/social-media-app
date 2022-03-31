@@ -8,6 +8,7 @@
 
 body {
   min-height: 100vh;
+  background-color: #fafafa;
 }
 
 html {
@@ -17,6 +18,10 @@ html {
 img,
 svg {
   max-width: 100%;
+}
+
+svg {
+  cursor: pointer;
 }
 
 a,
@@ -36,6 +41,7 @@ a:focus {
   width: 100%;
   background-color: #fff;
   border: 2px rgba(0, 0, 0, 0.2);
+  padding-inline: 1em;
 }
 
 .post-header {
@@ -43,7 +49,20 @@ a:focus {
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
-  padding: 1em;
+}
+.post-header h2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+.post-header h2 img,
+.post-header h2 svg {
+  width: 1.5em;
+  height: 1.5em;
+  -o-object-fit: contain;
+     object-fit: contain;
+  border-radius: 50%;
 }
 
 .post-image {
@@ -53,6 +72,11 @@ a:focus {
 }
 .post-image img {
   max-width: 614px;
+}
+
+.post-comments {
+  max-height: 3em;
+  overflow-y: auto;
 }
 
 .createpost {
@@ -130,6 +154,71 @@ a:focus {
   align-items: center;
 }
 
+.comment {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-posts {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  justify-content: center;
+  gap: 2em;
+  padding: 1em;
+}
+
+.profile-post {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.profile-posts-header {
+  text-align: center;
+}
+
+.profile-modal-post .post {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: repeat(4, 2em) 1fr 2em;
+  row-gap: 1em;
+  padding: 0;
+}
+.profile-modal-post .post .post-comments {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  gap: 0.5em;
+  max-height: 50vh;
+  padding-top: 0.5em;
+  padding-inline: 0.5em;
+  overflow-x: hidden;
+  word-wrap: break-all;
+}
+.profile-modal-post .post .post-comments .comment {
+  width: 100%;
+  word-break: break-all;
+}
+.profile-modal-post .post .post-image {
+  grid-area: 1/1/7/2;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
+}
+.profile-modal-post .post > * {
+  grid-column: 2/3;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding-top: 0.5em;
+  padding-inline: 0.5em;
+}
+.profile-modal-post .post .post-chaticon {
+  display: none;
+}
+
 .posts {
   width: 100%;
   display: grid;
@@ -144,8 +233,8 @@ a:focus {
   top: 0;
   left: 0;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   background-color: #fff;
