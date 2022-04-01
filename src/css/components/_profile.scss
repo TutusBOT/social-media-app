@@ -18,6 +18,8 @@
 }
 
 .profile-posts-header {
+	@include flex-center;
+	gap: 2em;
 	text-align: center;
 }
 

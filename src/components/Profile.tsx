@@ -1,5 +1,14 @@
 import { updateProfile, User } from "firebase/auth";
-import { DocumentData, getDoc, updateDoc } from "firebase/firestore";
+import {
+	collection,
+	DocumentData,
+	Firestore,
+	getDoc,
+	onSnapshot,
+	query,
+	QueryDocumentSnapshot,
+	updateDoc,
+} from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import React, { useEffect, useState } from "react";
 import { storage } from "../App";
@@ -8,13 +17,19 @@ import Post from "./Post";
 function Profile({
 	user,
 	posts,
+	db,
 }: {
 	user: User | null;
 	posts: DocumentData | undefined;
+	db: Firestore;
 }) {
 	const [image, setImage] = useState<any>();
 	const [username, setUsername] = useState(user?.displayName);
 	const [showPostModal, setShowPostModal] = useState<boolean | string>(false);
+	const [showSaved, setShowSaved] = useState(false);
+	const [savedPosts, setSavedPosts] = useState<
+		QueryDocumentSnapshot<DocumentData>[] | undefined
+	>();
 	const filteredPosts = posts?.filter((post: DocumentData) => {
 		return post.data().uid === user?.uid;
 	});
@@ -22,6 +37,13 @@ function Profile({
 	useEffect(() => {
 		setUsername(user?.displayName);
 	}, [user]);
+
+	useEffect(() => {
+		if (!user?.uid) return;
+		onSnapshot(collection(db, "user", user?.uid, "savedPosts"), (snapshot) => {
+			setSavedPosts(snapshot.docs);
+		});
+	}, [db]);
 	const imageRef = ref(storage, `profilePictures/${user?.uid}`);
 
 	const changeUsername = () => {
@@ -128,51 +150,119 @@ function Profile({
 				}}
 			/>
 			<button onClick={handleUpload}>Change ProfPic</button>
-			<h2 className="profile-posts-header">Posts</h2>
+			<div className="profile-posts-header">
+				<h2
+					style={{ textDecoration: !showSaved ? "underline" : "none" }}
+					onClick={() => {
+						setShowSaved(false);
+					}}
+				>
+					POSTS
+				</h2>
+				<h2
+					style={{ textDecoration: showSaved ? "underline" : "none" }}
+					onClick={() => {
+						setShowSaved(true);
+					}}
+				>
+					SAVED
+				</h2>
+			</div>
 			<div className="profile-posts">
-				{filteredPosts.map((post: DocumentData) => {
-					return (
-						<div
-							key={post.id}
-							className="profile-post"
-							onClick={() => {
-								console.log(post.id);
-								setShowPostModal(post.id);
-							}}
-						>
-							<img src={post.data().imageUrl} alt="" />
-							{showPostModal === post.id ? (
+				{!showSaved
+					? filteredPosts.map((post: DocumentData) => {
+							return (
 								<div
-									className="modal"
-									onClick={(e) => {
-										e.stopPropagation();
-										setShowPostModal(false);
-										console.log(showPostModal);
+									key={post.id}
+									className="profile-post"
+									onClick={() => {
+										console.log(post.id);
+										setShowPostModal(post.id);
 									}}
 								>
-									<div
-										className="profile-modal-post"
-										onClick={(e) => e.stopPropagation()}
-									>
-										<Post
-											key={post.id}
-											id={post.id}
-											username={post.data().username}
-											caption={post.data().caption}
-											imageUrl={post.data().imageUrl}
-											user={user}
-											timestamp={post.data().timestamp}
-											profilePic={post.data().profilePicture}
-											uid={post.data().uid}
-										/>
-									</div>
+									<img src={post.data().imageUrl} alt="" />
+									{showPostModal === post.id ? (
+										<div
+											className="modal"
+											onClick={(e) => {
+												e.stopPropagation();
+												setShowPostModal(false);
+												console.log(showPostModal);
+											}}
+										>
+											<div
+												className="profile-modal-post"
+												onClick={(e) => e.stopPropagation()}
+											>
+												<Post
+													key={post.id}
+													id={post.id}
+													username={post.data().username}
+													caption={post.data().caption}
+													imageUrl={post.data().imageUrl}
+													user={user}
+													timestamp={post.data().timestamp}
+													profilePic={post.data().profilePicture}
+													uid={post.data().uid}
+												/>
+											</div>
+										</div>
+									) : (
+										<></>
+									)}
 								</div>
-							) : (
-								<></>
-							)}
-						</div>
-					);
-				})}
+							);
+					  })
+					: posts?.map((post: DocumentData) => {
+							const filt = savedPosts?.filter((savedpost) => {
+								console.log("saved", savedpost);
+
+								return savedpost.data().postid === post.id;
+							});
+							console.log(filt);
+							if (!filt?.length) return;
+							return (
+								<div
+									key={post.id}
+									className="profile-post"
+									onClick={() => {
+										console.log(post.id);
+										setShowPostModal(post.id);
+									}}
+								>
+									<img src={post.data().imageUrl} alt="" />
+									{showPostModal === post.id ? (
+										<div
+											className="modal"
+											onClick={(e) => {
+												e.stopPropagation();
+												setShowPostModal(false);
+												console.log(showPostModal);
+											}}
+										>
+											<div
+												className="profile-modal-post"
+												onClick={(e) => e.stopPropagation()}
+											>
+												<Post
+													key={post.id}
+													id={post.id}
+													username={post.data().username}
+													caption={post.data().caption}
+													imageUrl={post.data().imageUrl}
+													user={user}
+													timestamp={post.data().timestamp}
+													profilePic={post.data().profilePicture}
+													uid={post.data().uid}
+												/>
+											</div>
+										</div>
+									) : (
+										<></>
+									)}
+								</div>
+							);
+					  })}
 			</div>
 		</div>
 	);

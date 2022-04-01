@@ -11,14 +11,16 @@ import {
 	serverTimestamp,
 	doc,
 	setDoc,
+	getDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { BsThreeDots, BsChat } from "react-icons/bs";
 import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
-import { MdSaveAlt } from "react-icons/md";
+import { BiTagAlt } from "react-icons/bi";
 import Moment from "react-moment";
+import SaveIcon from "./SaveIcon";
 function Post({
 	id,
 	username,
@@ -64,6 +66,7 @@ function Post({
 	const [comments, setComments] = useState<DocumentData>();
 	const [likes, setLikes] = useState<DocumentData>();
 	const [hasliked, setHasLiked] = useState(false);
+	const [isSaved, setIsSaved] = useState(false);
 	const db = getFirestore();
 	// const postDate = new Date(timestamp.seconds * 1000);
 
@@ -97,6 +100,24 @@ function Post({
 		);
 	}, [likes]);
 
+	useEffect(() => {
+		if (!user?.uid) return;
+		onSnapshot(doc(db, "user", user?.uid, "savedPosts", id), (snapshot) => {
+			if (!snapshot?.data()) {
+				setIsSaved(false);
+				return;
+			}
+			setIsSaved(true);
+		});
+	}, [db]);
+
+	// useEffect(() => {
+	// 	onSnapshot(
+	// 		collection(db, "user", user.uid, "savedPosts", id),
+	// 		(snapshot) => {}
+	// 	);
+	// }, []);
+
 	const addComment = async (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
 	) => {
@@ -121,6 +142,17 @@ function Post({
 				username: user.displayName,
 			});
 		}
+	};
+
+	const handleSavePost = () => {
+		if (isSaved) {
+			deleteDoc(doc(db, "user", user.uid, "savedPosts", id));
+			return;
+		}
+		setDoc(doc(db, "user", user.uid, "savedPosts", id), {
+			postid: id,
+		});
+		console.log("jd");
 	};
 
 	return (
@@ -179,7 +211,10 @@ function Post({
 				)}
 				<BsChat className="post-chaticon" size={"2em"} />
 				<FiSend size={"2em"} />
-				<MdSaveAlt size={"2em"} />
+				<SaveIcon
+					color={isSaved ? "black" : null}
+					handleSave={handleSavePost}
+				/>
 			</div>
 			<p>{likes ? likes.length : 0} likes</p>
 			<h4 className="post-caption" style={{ fontWeight: "normal" }}>

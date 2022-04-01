@@ -124,7 +124,7 @@ function App() {
 
 					<div className="posts">
 						{showProfile ? (
-							<Profile user={user} posts={posts} />
+							<Profile user={user} posts={posts} db={db} />
 						) : (
 							<>
 								{posts
