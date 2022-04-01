@@ -1,5 +1,12 @@
 @use "../abstracts/" as *;
 
+.profile-userdata {
+	display: grid;
+	.profile-profilepicture {
+		width: 5rem;
+	}
+}
+
 .profile-posts {
 	width: 100%;
 	display: grid;
@@ -21,6 +28,9 @@
 	@include flex-center;
 	gap: 2em;
 	text-align: center;
+	h2 {
+		cursor: pointer;
+	}
 }
 
 .profile-modal-post {

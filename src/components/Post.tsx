@@ -203,20 +203,22 @@ function Post({
 				<img src={imageUrl} alt="" />
 			</div>
 			{/* <Moment fromNow date={postDate.toDateString()} /> */}
-			<div>
-				{hasliked ? (
-					<AiFillHeart size={"2em"} color={"red"} onClick={likePost} />
-				) : (
-					<AiOutlineHeart size={"2em"} onClick={likePost} />
-				)}
-				<BsChat className="post-chaticon" size={"2em"} />
-				<FiSend size={"2em"} />
+			<div className="post-icons">
+				<div>
+					{hasliked ? (
+						<AiFillHeart size={"2em"} color={"red"} onClick={likePost} />
+					) : (
+						<AiOutlineHeart size={"2em"} onClick={likePost} />
+					)}
+					<BsChat className="post-chaticon" size={"2em"} />
+					<FiSend size={"2em"} />
+				</div>
 				<SaveIcon
 					color={isSaved ? "black" : null}
 					handleSave={handleSavePost}
 				/>
 			</div>
-			<p>{likes ? likes.length : 0} likes</p>
+			<p>{likes ? likes.length : 0} likes </p>
 			<h4 className="post-caption" style={{ fontWeight: "normal" }}>
 				{caption ? (
 					<>
@@ -247,9 +249,12 @@ function Post({
 						: ""
 					: ""}
 			</div>
-			<form>
+			<Moment fromNow date={timestamp.toDate()} />
+
+			<form className="post-formcomment">
 				<input
 					type="text"
+					placeholder="Add comment"
 					value={comment}
 					onChange={(e) => {
 						setComment(e.target.value);

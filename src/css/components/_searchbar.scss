@@ -1,0 +1,20 @@
+@use "../abstracts/" as *;
+
+.navbar-searchbar {
+	@include flex-center;
+	.navbar-searchbar-input {
+		border: none;
+		background-color: lighten($color-border, 70%);
+		padding: 0.5em;
+		border-radius: 0 1em 1em 0;
+	}
+	.navbar-searchbar-icon {
+		background-color: lighten($color-border, 70%);
+		border-radius: 1em 0 0 1em;
+		padding-left: 0.5em;
+	}
+	* {
+		height: 2rem;
+		font-size: 1.5rem;
+	}
+}

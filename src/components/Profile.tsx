@@ -128,31 +128,42 @@ function Profile({
 
 	return (
 		<div>
-			<p>
-				<label htmlFor="username">Username: </label>
-				<input
-					id="username"
-					type="text"
-					value={username ?? ""}
-					onChange={(e) => {
-						setUsername(e.target.value);
-					}}
+			<div className="profile-userdata">
+				<img
+					className="profile-profilepicture"
+					src={user?.photoURL || ""}
+					alt="profile"
 				/>
-				<button onClick={changeUsername}>Submit</button>
-			</p>
-			<p>{user?.email}</p>
-			<img src={user?.photoURL || ""} alt="" />
-			<input
-				type="file"
-				accept="image/*"
-				onChange={(e) => {
-					handleChange(e);
-				}}
-			/>
-			<button onClick={handleUpload}>Change ProfPic</button>
+				<p>
+					<label htmlFor="username">Username: </label>
+					<input
+						id="username"
+						type="text"
+						value={username ?? ""}
+						onChange={(e) => {
+							setUsername(e.target.value);
+						}}
+					/>
+					<button onClick={changeUsername}>Submit</button>
+				</p>
+				<p>Email: {user?.email}</p>
+				<div>
+					<input
+						type="file"
+						accept="image/*"
+						onChange={(e) => {
+							handleChange(e);
+						}}
+					/>
+					<button onClick={handleUpload}>Change ProfPic</button>
+				</div>
+			</div>
 			<div className="profile-posts-header">
 				<h2
-					style={{ textDecoration: !showSaved ? "underline" : "none" }}
+					style={{
+						textDecoration: !showSaved ? "underline" : "none",
+						color: !showSaved ? "#000" : "#00000033",
+					}}
 					onClick={() => {
 						setShowSaved(false);
 					}}
@@ -160,7 +171,10 @@ function Profile({
 					POSTS
 				</h2>
 				<h2
-					style={{ textDecoration: showSaved ? "underline" : "none" }}
+					style={{
+						textDecoration: showSaved ? "underline" : "none",
+						color: showSaved ? "#000" : "#00000033",
+					}}
 					onClick={() => {
 						setShowSaved(true);
 					}}

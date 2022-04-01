@@ -5,7 +5,7 @@
 	grid-template-columns: 1fr;
 	width: 100%;
 	background-color: $color-main;
-	border: 2px $color-border;
+	border: 2px solid $color-border;
 	padding-inline: 1em;
 }
 
@@ -27,11 +27,16 @@
 	}
 }
 
+.post-icons {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .post-image {
+	justify-self: center;
 	@include flex-center;
-	img {
-		max-width: 614px;
-	}
+	max-width: 614px;
 }
 
 .post-comments {
@@ -41,4 +46,11 @@
 
 .post-saveicon {
 	fill: black;
+}
+
+.post-formcomment {
+	width: 100%;
+	input {
+		border: none;
+	}
 }
