@@ -6,7 +6,9 @@
 	width: 100%;
 	background-color: $color-main;
 	border: 2px solid $color-border;
-	padding-inline: 1em;
+	> * {
+		padding-inline: 1em;
+	}
 }
 
 .post-header {
@@ -31,17 +33,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	div {
+		@include flex-center;
+		gap: 1em;
+	}
+	// border-bottom: $color-border solid 1px;
+	// border-top: $color-border solid 1px;
 }
 
 .post-image {
 	justify-self: center;
 	@include flex-center;
 	max-width: 614px;
+	padding-block: 0.25rem;
 }
 
 .post-comments {
 	max-height: 3em;
 	overflow-y: auto;
+	// border-bottom: $color-border solid 1px;
+	// border-top: $color-border solid 1px;
 }
 
 .post-saveicon {
@@ -50,7 +61,25 @@
 
 .post-formcomment {
 	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-top: 1px solid $color-border;
+	padding-block: 0.25em;
+	* {
+		font-size: 1.5rem;
+	}
 	input {
 		border: none;
+		&:focus {
+			outline: none;
+		}
+	}
+	button {
+		cursor: pointer;
+		background: none;
+		outline: none;
+		border: none;
+		color: $color-blue;
 	}
 }

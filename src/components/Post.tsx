@@ -260,7 +260,12 @@ function Post({
 						setComment(e.target.value);
 					}}
 				/>
-				<button type="submit" disabled={!comment.trim()} onClick={addComment}>
+				<button
+					type="submit"
+					disabled={!comment.trim()}
+					style={{ color: !comment.trim() ? "#0095f64d" : "#0095f6" }}
+					onClick={addComment}
+				>
 					Post
 				</button>
 			</form>

@@ -44,6 +44,8 @@ a:focus {
   width: 100%;
   background-color: #fff;
   border: 2px solid rgba(0, 0, 0, 0.2);
+}
+.post > * {
   padding-inline: 1em;
 }
 
@@ -73,6 +75,12 @@ a:focus {
   align-items: center;
   justify-content: space-between;
 }
+.post-icons div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
 
 .post-image {
   justify-self: center;
@@ -80,6 +88,7 @@ a:focus {
   justify-content: center;
   align-items: center;
   max-width: 614px;
+  padding-block: 0.25rem;
 }
 
 .post-comments {
@@ -93,9 +102,27 @@ a:focus {
 
 .post-formcomment {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding-block: 0.25em;
+}
+.post-formcomment * {
+  font-size: 1.5rem;
 }
 .post-formcomment input {
   border: none;
+}
+.post-formcomment input:focus {
+  outline: none;
+}
+.post-formcomment button {
+  cursor: pointer;
+  background: none;
+  outline: none;
+  border: none;
+  color: #0095f6;
 }
 
 .createpost {
@@ -129,7 +156,12 @@ a:focus {
   cursor: pointer;
 }
 .navbar-usermenu img {
-  width: 2em;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  -o-object-fit: contain;
+     object-fit: contain;
 }
 
 .usermenu-modal {
