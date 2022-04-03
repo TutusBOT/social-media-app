@@ -45,7 +45,13 @@ function UserMenu({
 					alt=""
 				/>
 			) : (
-				<FaUserCircle />
+				<div
+					onClick={() => {
+						setOpenUser("flex");
+					}}
+				>
+					<FaUserCircle size={"2rem"} />
+				</div>
 			)}
 
 			<div

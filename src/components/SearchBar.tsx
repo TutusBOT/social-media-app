@@ -15,7 +15,12 @@ function SearchBar({
 				e.preventDefault();
 			}}
 		>
-			<div className="navbar-searchbar-icon">
+			<div
+				className="navbar-searchbar-icon"
+				onClick={() => {
+					setSearchInput(value);
+				}}
+			>
 				<AiOutlineSearch />
 			</div>
 			<input

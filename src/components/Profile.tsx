@@ -134,7 +134,7 @@ function Profile({
 					src={user?.photoURL || ""}
 					alt="profile"
 				/>
-				<p>
+				<p className="profile-username">
 					<label htmlFor="username">Username: </label>
 					<input
 						id="username"
@@ -221,9 +221,7 @@ function Profile({
 												/>
 											</div>
 										</div>
-									) : (
-										<></>
-									)}
+									) : null}
 								</div>
 							);
 					  })
@@ -271,9 +269,7 @@ function Profile({
 												/>
 											</div>
 										</div>
-									) : (
-										<></>
-									)}
+									) : null}
 								</div>
 							);
 					  })}

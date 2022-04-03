@@ -45,7 +45,7 @@ function Header({
 					setSearchInput={setSearchInput}
 				/>
 			) : (
-				<>
+				<div className="authentication-buttons">
 					<button
 						onClick={() => {
 							setOpenSignUp(true);
@@ -53,8 +53,9 @@ function Header({
 					>
 						Sign Up
 					</button>
+					<div>|</div>
 					<button onClick={() => [setOpenSignIn(true)]}>Sign In</button>
-				</>
+				</div>
 			)}
 			{openSignIn ? (
 				<form
@@ -104,6 +105,14 @@ function Header({
 					}}
 				>
 					<div onClick={(e) => [e.stopPropagation()]}>
+						username:{" "}
+						<input
+							type="text"
+							value={username}
+							onChange={(e) => {
+								setUsername(e.target.value);
+							}}
+						/>
 						email:{" "}
 						<input
 							type="email"
@@ -118,13 +127,6 @@ function Header({
 							value={password}
 							onChange={(e) => {
 								setPassword(e.target.value);
-							}}
-						/>
-						<input
-							type="text"
-							value={username}
-							onChange={(e) => {
-								setUsername(e.target.value);
 							}}
 						/>
 						<button

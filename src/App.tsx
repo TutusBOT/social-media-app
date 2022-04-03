@@ -169,51 +169,9 @@ function App() {
 					</div>
 				</>
 			) : (
-				<form
-					className="authentication"
-					onSubmit={(e) => {
-						e.preventDefault();
-					}}
-				>
-					username:{" "}
-					<input
-						type="text"
-						value={username}
-						onChange={(e) => {
-							setUsername(e.target.value);
-						}}
-					/>
-					email:{" "}
-					<input
-						type="email"
-						value={email}
-						onChange={(e) => {
-							setEmail(e.target.value);
-						}}
-					/>{" "}
-					password:{" "}
-					<input
-						type="password"
-						value={password}
-						onChange={(e) => {
-							setPassword(e.target.value);
-						}}
-					/>
-					<button
-						onClick={() => {
-							signUp(email, password, username);
-						}}
-					>
-						Sign Up
-					</button>{" "}
-					<button
-						onClick={() => {
-							signIn(email, password);
-						}}
-					>
-						Sign in
-					</button>
-				</form>
+				<div className="nousermessage">
+					<h1>Please consider that this app is still in developement.</h1>
+				</div>
 			)}
 		</main>
 	);

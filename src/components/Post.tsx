@@ -181,19 +181,29 @@ function Post({
 							setOpenPostMenu(false);
 						}}
 					>
-						{uid == user.uid ? (
+						<div className="post-buttons">
+							{uid == user.uid ? (
+								<button
+									className="post-delete"
+									onClick={(e) => {
+										e.stopPropagation();
+										deleteDoc(doc(db, "posts", id));
+										setOpenPostMenu(false);
+									}}
+								>
+									Delete Post
+								</button>
+							) : (
+								""
+							)}
 							<button
-								onClick={(e) => {
-									e.stopPropagation();
-									deleteDoc(doc(db, "posts", id));
+								onClick={() => {
 									setOpenPostMenu(false);
 								}}
 							>
-								Delete Post
+								Cancel
 							</button>
-						) : (
-							""
-						)}
+						</div>
 					</div>
 				) : (
 					""
@@ -236,20 +246,26 @@ function Post({
 
 								return (
 									<div key={com.id} className="comment">
-										<p>
-											{com.data().username}
-											{": "}
-											{com.data().comment}
-										</p>
-
-										<p>{com.data().likes || 0} likes</p>
+										<img
+											src={com.data().profilePicture}
+											alt="profile"
+											style={{
+												width: "2rem",
+												height: "2rem",
+												borderRadius: "50%",
+												marginRight: "0.5rem",
+											}}
+										/>
+										{com.data().username}
+										{": "}
+										{com.data().comment}
 									</div>
 								);
 						  })
 						: ""
 					: ""}
 			</div>
-			<Moment fromNow date={timestamp.toDate()} />
+			{timestamp ? <Moment fromNow date={timestamp.toDate()} /> : null}
 
 			<form className="post-formcomment">
 				<input
