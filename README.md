@@ -26,3 +26,4 @@ Search looks for posts that include searched term in post's caption. Then it dis
 ## Profile
 
 User can change here their profile picture and username. Here are also displayed user's posts and the saved ones.
+
