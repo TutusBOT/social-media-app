@@ -2,7 +2,7 @@
 	"name": "social_media",
 	"version": "0.1.0",
 	"private": true,
-	"homepage": "https://www.bartlomiej-tutak.pl/projekty/social-media/",
+	"homepage": ".",
 	"dependencies": {
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.4",
