@@ -4,7 +4,6 @@ import {
 	collection,
 	addDoc,
 	getFirestore,
-	Timestamp,
 	serverTimestamp,
 	updateDoc,
 	doc,
@@ -69,7 +68,6 @@ function CreatePost({
 				// Handle successful uploads on complete
 				// For instance, get the download URL: https://firebasestorage.googleapis.com/...
 				getDownloadURL(uploadImage.snapshot.ref).then((downloadURL) => {
-					//   console.log('File available at', downloadURL);
 					updateDoc(doc(db, "posts", docRef.id), {
 						imageUrl: downloadURL,
 					});
